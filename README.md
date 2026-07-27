@@ -1,6 +1,6 @@
 # ⚡ PhysaFlow — Data Center Stranded Capacity Calculator
 
-> Herramienta de diagnóstico ágil y visualización técnica para estimar capacidad variada y pérdidas financieras en Data Centers.
+> Herramienta de diagnóstico ágil y visualización técnica para estimar capacidad varada y pérdidas financieras en Data Centers.
 
 ---
 
