@@ -40,7 +40,7 @@ Diagramas y detalle del recorrido del usuario:
 
 ```bash
 # Clonar el repositorio
-git clone [https://github.com/tu-usuario/physaflow-mobile.git](https://github.com/tu-usuario/physaflow-mobile.git)
+git clone https://github.com/tu-usuario/physaflow-mobile.git
 
 # Instalar dependencias
 npm install
