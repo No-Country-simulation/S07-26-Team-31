@@ -28,19 +28,19 @@ Combinamos el enrutamiento nativo de Expo Router (`app/`) con una organización 
 
 ```text
 physaflow/
-├── app/                     # Rutas y Navegación (Expo Router File-based Routing)
-│   ├── _layout.tsx          # Layout raíz (Providers: i18n, Zustand, Theme)
-│   ├── index.tsx            # Redirección o Splash Screen inicial
-│   ├── (calculator)/        # Grupo de rutas de la calculadora
-│   │   ├── _layout.tsx      # Layout con Header de PhysaFlow
-│   │   ├── index.tsx        # Pantalla 1: Formulario de Inputs (MW, Cooling, Util)
-│   │   ├── result.tsx       # Pantalla 2: Diagnostic Summary & 3-Layer Visualizer
-│   │   └── full-analysis.tsx# Pantalla 3: Detailed Facility Breakdown & Simulator
-│   └── history/             # Pantalla 4: Histórico de Consultas
-│       └── index.tsx
 │
+├── assets/              # Fuentes, logos e imágenes estáticas
 ├── src/                     # Lógica de Negocio y Componentes Reutilizables
-│   ├── assets/              # Fuentes, logos e imágenes estáticas
+│   ├── app/                     # Rutas y Navegación (Expo Router File-based Routing)
+│   │   ├── _layout.tsx          # Layout raíz (Providers: i18n, Zustand, Theme)
+│   │   ├── index.tsx            # Redirección o Splash Screen inicial
+│   │   ├── (calculator)/        # Grupo de rutas de la calculadora
+│   │   │   ├── _layout.tsx      # Layout con Header de PhysaFlow
+│   │   │   ├── index.tsx        # Pantalla 1: Formulario de Inputs (MW, Cooling, Util)
+│   │   │   ├── result.tsx       # Pantalla 2: Diagnostic Summary & 3-Layer Visualizer
+│   │   │   └── full-analysis.tsx# Pantalla 3: Detailed Facility Breakdown & Simulator
+│   │   └── history/             # Pantalla 4: Histórico de Consultas
+│   │       └── index.tsx
 │   ├── components/          # Componentes de UI genéricos / átomos
 │   │   ├── common/          # Buttons, Cards, Inputs, Modals, Sliders
 │   │   └── layout/          # Containers, TopBars, Headers
