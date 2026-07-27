@@ -18,7 +18,7 @@ Para mantener el proyecto organizado y facilitar la colaboración, la documentac
 
 ### 1. 🛠️ [Estándares de Desarrollo & Nomenclatura](./docs/development/01-development-standards.md)
 Normas de trabajo para el equipo de desarrollo:
-* Git Flow y estrategia de ramas (`feature/`, `fix/`, `refactor/`).
+* Git Flow y estrategia de ramas (`feature/`, `fix/`, `refactor/`, `docs/`).
 * Convención de Commits (*Conventional Commits*).
 * Estructura y Checklist para Pull Requests (PRs).
 
