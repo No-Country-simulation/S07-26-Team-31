@@ -25,7 +25,8 @@
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.10.0"
+    "react-native-worklets": "0.10.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
@@ -34,10 +35,19 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "version:patch": "node ./scripts/bump-version.js patch",
+    "version:minor": "node ./scripts/bump-version.js minor",
+    "version:major": "node ./scripts/bump-version.js major",
+    "prebuild": "npx expo prebuild",
+    "build:debug": "npx expo prebuild && npx expo run:android --variant debug",
+    "build": "npx expo prebuild && npx expo run:android --variant release",
+    "build:patch": "node ./scripts/bump-version.js patch && npx expo prebuild && npx expo run:android --variant release",
+    "build:minor": "node ./scripts/bump-version.js minor && npx expo prebuild && npx expo run:android --variant release",
+    "build:major": "node ./scripts/bump-version.js major && npx expo prebuild && npx expo run:android --variant release"
   },
   "private": true
 }
