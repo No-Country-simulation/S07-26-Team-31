@@ -1,56 +1,172 @@
-# Welcome to your Expo app 👋
+# PhysaFlow Calculator
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <img src="./assets/images/logo.png" alt="PhysaFlow Calculator" width="180" />
+</p>
 
-## Get started
+<p align="center">
+  Mobile calculator for estimating data center capacity waste and its annual cost.
+</p>
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Overview
 
-2. Start the app
+PhysaFlow Calculator is a cross-platform mobile application built with **React Native** and **Expo**. It enables data center operators to quickly estimate unused infrastructure capacity and understand the financial impact of that waste.
 
-   ```bash
-   npx expo start
-   ```
+The application is designed with a modern dark interface focused on simplicity, speed, and usability.
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Tech Stack
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- React Native 0.86
+- Expo SDK 57
+- Expo Router
+- TypeScript
+- Zustand
+- React Native Reanimated
+- React Native Gesture Handler
+- Safe Area Context
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## Requirements
+
+- Node.js 22+
+- npm
+- Android Studio (Android development)
+- Xcode (iOS development on macOS)
+
+---
+
+## Installation
+
+Install dependencies:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Start the development server:
 
-### Other setup steps
+```bash
+npm run start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+---
 
-## Learn more
+## Available Scripts
 
-To learn more about developing your project with Expo, look at the following resources:
+### Development
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run start
+```
 
-## Join the community
+Starts the Expo development server.
 
-Join our community of developers creating universal apps.
+```bash
+npm run android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Runs the application on Android.
+
+```bash
+npm run ios
+```
+
+Runs the application on iOS.
+
+```bash
+npm run web
+```
+
+Runs the application in the browser.
+
+---
+
+### Native Build
+
+Generate native projects:
+
+```bash
+npm run prebuild
+```
+
+Debug build:
+
+```bash
+npm run build:debug
+```
+
+Release build:
+
+```bash
+npm run build
+```
+
+---
+
+### Version Management
+
+Increase patch version:
+
+```bash
+npm run version:patch
+```
+
+Increase minor version:
+
+```bash
+npm run version:minor
+```
+
+Increase major version:
+
+```bash
+npm run version:major
+```
+
+Build while updating the version:
+
+```bash
+npm run build:patch
+npm run build:minor
+npm run build:major
+```
+
+---
+
+## Project Structure
+
+```text
+assets/
+src/
+ ├── app/
+ ├── components/
+ ├── constants/
+ ├── hooks/
+ ├── stores/
+ ├── theme/
+ ├── types/
+ └── utils/
+```
+
+---
+
+## Features
+
+- Cross-platform (Android, iOS and Web)
+- Expo Router navigation
+- Custom Design System
+- Global state management with Zustand
+- TypeScript
+- Responsive layout
+- Native builds with Expo
+
+---
+
+## License
+
+This project was developed as part of the PhysaFlow platform.
