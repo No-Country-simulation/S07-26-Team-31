@@ -11,17 +11,17 @@ graph TD
     %% Pantallas
     START(("🚀 Inicio / App Launch"))
 
-    S1["📱 Pantalla 1: Home / Input<br/>app/(calculator)/index.tsx<br/>• MW, Utilización % y Cooling"]
+    S1["📱 Pantalla 1: Home / Input<br/>PhysaFlowCalculator/app/(calculator)/index.tsx<br/>• MW, Utilización % y Cooling"]
 
-    S2["📊 Pantalla 2: Diagnostic Summary<br/>app/(calculator)/result.tsx<br/>• Pérdida financiera anual<br/>• Visualizador de 3 capas"]
+    S2["📊 Pantalla 2: Diagnostic Summary<br/>PhysaFlowCalculator/app/(calculator)/result.tsx<br/>• Pérdida financiera anual<br/>• Visualizador de 3 capas"]
 
     MODAL["📩 Bottom Sheet: Captura de Email<br/>• Email corporativo obligatorio<br/>• Validación de formato<br/>• Desbloquea acciones premium"]
 
     SHARE["📤 Compartir Diagnóstico<br/>• Generar imagen PNG<br/>• Menú nativo de compartir"]
 
-    S3["🔍 Pantalla 3: Full Deep Analysis<br/>app/(calculator)/full-analysis.tsx<br/>• Breakdown por capas<br/>• Simulador<br/>• Exportar PDF"]
+    S3["🔍 Pantalla 3: Full Deep Analysis<br/>PhysaFlowCalculator/app/(calculator)/full-analysis.tsx<br/>• Breakdown por capas<br/>• Simulador<br/>• Exportar PDF"]
 
-    S4["🗂️ Pantalla 4: Histórico<br/>app/history/index.tsx<br/>• Resultados guardados<br/>• Comparación Side-by-Side"]
+    S4["🗂️ Pantalla 4: Histórico<br/>PhysaFlowCalculator/app/history/index.tsx<br/>• Resultados guardados<br/>• Comparación Side-by-Side"]
 
     %% Flujo principal
     START --> S1

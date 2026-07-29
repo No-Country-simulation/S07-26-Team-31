@@ -43,6 +43,7 @@ Diagramas y detalle del recorrido del usuario:
 git clone https://github.com/tu-usuario/physaflow-mobile.git
 
 # Instalar dependencias
+cd PhysaFlowCalculator
 npm install
 
 # Ejecutar en entorno local (Mobile / Web)
