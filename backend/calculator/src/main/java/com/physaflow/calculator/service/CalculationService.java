@@ -2,6 +2,8 @@ package com.physaflow.calculator.service;
 
 import com.physaflow.calculator.dto.CalculationRequest;
 import com.physaflow.calculator.dto.CalculationResponse;
+import com.physaflow.calculator.dto.mapper.CalculationMapper;
+import com.physaflow.calculator.exception.ResourceNotFoundException;
 import com.physaflow.calculator.model.Calculo;
 import com.physaflow.calculator.repository.CalculoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.Base64;
 public class CalculationService {
 
     private final CalculoRepository calculoRepository;
+    private final CalculationMapper calculationMapper;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // Precio promedio por MWh (ajustable, es un estimado representativo)
@@ -36,7 +39,7 @@ public class CalculationService {
             case "gratuito" -> 0.95;  // 5% overhead
             case "inmersion" -> 0.95; // 5% overhead
             case "hibrido" -> 0.80;   // 20% overhead
-            default -> throw new IllegalArgumentException("Tipo de enfriamiento no válido");
+            default -> throw new IllegalArgumentException("El tipo de enfriamiento '" + request.getTipoEnfriamiento() + "' no es válido. Valores permitidos: aire, liquido, gratuito, inmersion, hibrido");
         };
 
         double itCapacityMw = request.getCapacidadInstalacionMw() * factorCooling;
@@ -105,67 +108,22 @@ public class CalculationService {
         calculo = calculoRepository.save(calculo);
 
         // 8. Devolver DTO de respuesta
-        return CalculationResponse.builder()
-                .id(calculo.getId())
-                .tokenCompartido(token)
-                .capacidadInstalacionMw(calculo.getCapacidadInstalacionMw())
-                .porcentajeUtilizacion(calculo.getPorcentajeUtilizacion())
-                .tipoEnfriamiento(calculo.getTipoEnfriamiento())
-                .porcentajeCapacidadDesperdiciada(calculo.getPorcentajeCapacidadDesperdiciada())
-                .capacidadDesperdiciadaMw(calculo.getCapacidadDesperdiciadaMw())
-                .perdidaAnualMinima(calculo.getPerdidaAnualMinima())
-                .perdidaAnualMaxima(calculo.getPerdidaAnualMaxima())
-                .pue(calculo.getPue())
-                .pueDelta(calculo.getPueDelta())
-                .utilizacionIt(calculo.getUtilizacionIt())
-                .costoCarbonoAnual(calculo.getCostoCarbonoAnual())
-                .estadoSalud(calculo.getEstadoSalud())
-                .comparacionIndustria(calculo.getComparacionIndustria())
-                .fugaTermicaMw(calculo.getFugaTermicaMw())
-                .servidoresZombiMw(calculo.getServidoresZombiMw())
-                .sobrecostoRedundanciaMw(calculo.getSobrecostoRedundanciaMw())
-                .correo(calculo.getCorreo())
-                .creadoEn(calculo.getCreadoEn())
-                .build();
+        return calculationMapper.toResponse(calculo);
     }
 
     public CalculationResponse obtenerPorToken(String token) {
-        Calculo calculo = calculoRepository.findByTokenCompartido(token)
-                .orElseThrow(() -> new RuntimeException("Cálculo no encontrado"));
-        return mapToResponse(calculo);
+        return calculoRepository.findByTokenCompartido(token)
+                .map(calculationMapper::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el token: " + token));
     }
 
     public CalculationResponse actualizarCorreo(UUID id, String correo) {
         Calculo calculo = calculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cálculo no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el ID: " + id));
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);
-        return mapToResponse(calculo);
-    }
 
-    private CalculationResponse mapToResponse(Calculo calculo) {
-        return CalculationResponse.builder()
-                .id(calculo.getId())
-                .tokenCompartido(calculo.getTokenCompartido())
-                .capacidadInstalacionMw(calculo.getCapacidadInstalacionMw())
-                .porcentajeUtilizacion(calculo.getPorcentajeUtilizacion())
-                .tipoEnfriamiento(calculo.getTipoEnfriamiento())
-                .porcentajeCapacidadDesperdiciada(calculo.getPorcentajeCapacidadDesperdiciada())
-                .capacidadDesperdiciadaMw(calculo.getCapacidadDesperdiciadaMw())
-                .perdidaAnualMinima(calculo.getPerdidaAnualMinima())
-                .perdidaAnualMaxima(calculo.getPerdidaAnualMaxima())
-                .pue(calculo.getPue())
-                .pueDelta(calculo.getPueDelta())
-                .utilizacionIt(calculo.getUtilizacionIt())
-                .costoCarbonoAnual(calculo.getCostoCarbonoAnual())
-                .estadoSalud(calculo.getEstadoSalud())
-                .comparacionIndustria(calculo.getComparacionIndustria())
-                .fugaTermicaMw(calculo.getFugaTermicaMw())
-                .servidoresZombiMw(calculo.getServidoresZombiMw())
-                .sobrecostoRedundanciaMw(calculo.getSobrecostoRedundanciaMw())
-                .correo(calculo.getCorreo())
-                .creadoEn(calculo.getCreadoEn())
-                .build();
+        return calculationMapper.toResponse(calculo);
     }
 
     private String generarToken() {
