@@ -79,33 +79,25 @@ export default function Index() {
 							</Text>
 						</View>
 						<View style={styles.optionContainer}>
-							<Ionicons
-								name="reorder-three"
-								size={28}
-								color={Colors.dark.primary}
-							/>
+							<Ionicons name="water" size={28} color={Colors.dark.primary} />
 							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} por aire
+								Enfriamiento{'\n'} liquido
+							</Text>
+						</View>
+						<View style={styles.optionContainer}>
+							<Ionicons name="layers" size={28} color={Colors.dark.primary} />
+							<Text style={{ color: '#fff', textAlign: 'center' }}>
+								Enfriamiento{'\n'} inmersion
 							</Text>
 						</View>
 						<View style={styles.optionContainer}>
 							<Ionicons
-								name="reorder-three"
+								name="git-merge"
 								size={28}
 								color={Colors.dark.primary}
 							/>
 							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} por aire
-							</Text>
-						</View>
-						<View style={styles.optionContainer}>
-							<Ionicons
-								name="reorder-three"
-								size={28}
-								color={Colors.dark.primary}
-							/>
-							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} por aire
+								Enfriamiento{'\n'} hibrido
 							</Text>
 						</View>
 					</View>
