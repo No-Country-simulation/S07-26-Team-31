@@ -8,6 +8,7 @@ import com.physaflow.calculator.model.Calculo;
 import com.physaflow.calculator.repository.CalculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.Set;
 import java.util.UUID;
 
 import java.security.SecureRandom;
@@ -19,11 +20,21 @@ public class CalculationService {
 
     private final CalculoRepository calculoRepository;
     private final CalculationMapper calculationMapper;
+    private final EmailService emailService;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // Precio promedio por MWh (ajustable, es un estimado representativo)
     private static final double COSTO_POR_MWH = 75.0; // USD
     private static final double HORAS_ANIO = 8760.0;
+
+    // Dominios de correo gratuito
+    private static final Set<String> FREE_EMAIL_DOMAINS = Set.of(
+            "gmail.com",
+            "hotmail.com",
+            "yahoo.com",
+            "outlook.com",
+            "live.com"
+    );
 
     // Constantes para nuevas métricas
     private static final double BENCHMARK_PUE = 1.5;
@@ -120,8 +131,11 @@ public class CalculationService {
     public CalculationResponse actualizarCorreo(UUID id, String correo) {
         Calculo calculo = calculoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el ID: " + id));
+
+        validarCorreoCorporativo(correo);
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);
+        emailService.sendCalculationEmail(correo, calculo.getTokenCompartido());
 
         return calculationMapper.toResponse(calculo);
     }
@@ -130,5 +144,13 @@ public class CalculationService {
         byte[] bytes = new byte[24];
         RANDOM.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    private void validarCorreoCorporativo(String email){
+        String dominio = email.substring(email.indexOf("@")+1).toLowerCase();
+
+        if (FREE_EMAIL_DOMAINS.contains(dominio)) {
+            throw new IllegalArgumentException("Por favor, utilizá un correo corporativo.");
+        }
     }
 }
