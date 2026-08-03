@@ -27,15 +27,6 @@ public class CalculationService {
     private static final double COSTO_POR_MWH = 75.0; // USD
     private static final double HORAS_ANIO = 8760.0;
 
-    // Dominios de correo gratuito
-    private static final Set<String> FREE_EMAIL_DOMAINS = Set.of(
-            "gmail.com",
-            "hotmail.com",
-            "yahoo.com",
-            "outlook.com",
-            "live.com"
-    );
-
     // Constantes para nuevas métricas
     private static final double BENCHMARK_PUE = 1.5;
     private static final double BENCHMARK_STRANDED_PCT = 28.0;
@@ -132,7 +123,6 @@ public class CalculationService {
         Calculo calculo = calculoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el ID: " + id));
 
-        validarCorreoCorporativo(correo);
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);
         emailService.sendCalculationEmail(correo, calculo.getTokenCompartido());
@@ -146,11 +136,4 @@ public class CalculationService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    private void validarCorreoCorporativo(String email){
-        String dominio = email.substring(email.indexOf("@")+1).toLowerCase();
-
-        if (FREE_EMAIL_DOMAINS.contains(dominio)) {
-            throw new IllegalArgumentException("Por favor, utilizá un correo corporativo.");
-        }
-    }
 }
