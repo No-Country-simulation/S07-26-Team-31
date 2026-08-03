@@ -1,12 +1,14 @@
 import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
+import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Index() {
+	const router = useRouter();
 	return (
 		<Screen>
 			<View style={styles.container}>
@@ -103,7 +105,9 @@ export default function Index() {
 					</View>
 				</View>
 			</View>
-			<Pressable style={styles.button}>
+			<Pressable style={styles.button} onPress={() => {
+				router.push('/basicResult');
+			}}>
 				<Text style={styles.buttonText}>Calcular</Text>
 			</Pressable>
 		</Screen>
