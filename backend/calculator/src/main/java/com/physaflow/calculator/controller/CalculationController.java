@@ -2,6 +2,7 @@ package com.physaflow.calculator.controller;
 
 import com.physaflow.calculator.dto.CalculationRequest;
 import com.physaflow.calculator.dto.CalculationResponse;
+import com.physaflow.calculator.dto.UpdateEmailRequest;
 import com.physaflow.calculator.service.CalculationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,7 @@ public class CalculationController {
 
     @PatchMapping("/{id}/email")
     public ResponseEntity<CalculationResponse> patchEmail(@PathVariable UUID id,
-                                                          @RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        if (email == null || email.isBlank()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(calculationService.actualizarCorreo(id, email));
+                                                          @Valid @RequestBody UpdateEmailRequest request) {
+        return ResponseEntity.ok(calculationService.actualizarCorreo(id, request.getEmail()));
     }
 }

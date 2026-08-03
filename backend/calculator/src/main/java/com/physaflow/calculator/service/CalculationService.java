@@ -8,6 +8,7 @@ import com.physaflow.calculator.model.Calculo;
 import com.physaflow.calculator.repository.CalculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.Set;
 import java.util.UUID;
 
 import java.security.SecureRandom;
@@ -19,6 +20,7 @@ public class CalculationService {
 
     private final CalculoRepository calculoRepository;
     private final CalculationMapper calculationMapper;
+    private final EmailService emailService;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // Precio promedio por MWh (ajustable, es un estimado representativo)
@@ -120,8 +122,10 @@ public class CalculationService {
     public CalculationResponse actualizarCorreo(UUID id, String correo) {
         Calculo calculo = calculoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el ID: " + id));
+
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);
+        emailService.sendCalculationEmail(correo, calculo.getTokenCompartido());
 
         return calculationMapper.toResponse(calculo);
     }
@@ -131,4 +135,5 @@ public class CalculationService {
         RANDOM.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
+
 }
