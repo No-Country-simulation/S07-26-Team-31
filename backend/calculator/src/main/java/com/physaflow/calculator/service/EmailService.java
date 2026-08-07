@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Slf4j
 @Service
 public class EmailService {
@@ -55,7 +53,7 @@ public class EmailService {
             request.setBody(mail.build());
             Response response = sg.api(request);
             log.info("Email enviado a {} - Status: {}", to, response.getStatusCode());
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error al enviar email a {}: {}", to, e.getMessage());
         }
     }
