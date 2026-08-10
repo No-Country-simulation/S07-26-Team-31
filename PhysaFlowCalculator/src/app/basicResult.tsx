@@ -7,8 +7,9 @@ import FinancialCard from '@/features/diagnostic/components/FinancialCard';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
 import HeroSection from '@/features/diagnostic/components/HeroSection';
 import LeadCapture from '@/features/diagnostic/components/LeadCapture';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 
 const BasicResult = () => {
 	const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
@@ -110,12 +111,20 @@ const BasicResult = () => {
             /> */}
 
 			<BottomActions onUnlockAnalysis={() => setLeadCaptureOpen(true)} />
-			<BottomSheet
+			<Pressable
+				style={styles.button}
+				onPress={() => {
+					router.push('/DepthAnalysis');
+				}}
+			>
+				<Text style={styles.buttonText}>Calcular</Text>
+			</Pressable>
+			{/* <BottomSheet
 				visible={leadCaptureOpen}
 				onClose={() => setLeadCaptureOpen(false)}
 			>
 				<LeadCapture />
-			</BottomSheet>
+			</BottomSheet> */}
 		</Screen>
 	);
 };
@@ -155,6 +164,18 @@ const styles = StyleSheet.create({
 	criticalTextAlt: {
 		color: Colors.dark.error,
 		fontSize: 32,
+	},
+	button: {
+		backgroundColor: Colors.dark.primary,
+		paddingVertical: 16,
+		paddingHorizontal: 24,
+		borderRadius: 8,
+		alignItems: 'center',
+	},
+	buttonText: {
+		color: Colors.dark.background,
+		fontWeight: '700',
+		fontSize: 16,
 	},
 });
 

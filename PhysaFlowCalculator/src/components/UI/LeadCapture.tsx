@@ -1,6 +1,7 @@
 // components/LeadCapture.tsx
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { Fonts } from '@/constants/Fonts';
 
 const LeadCapture = () => {
 	return (
@@ -34,30 +35,31 @@ const LeadCapture = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: Colors.dark.card,
+		backgroundColor: Colors.dark.surface,
 		borderTopWidth: 2,
 		borderTopColor: Colors.dark.primary,
 		borderRadius: 12,
-		paddingHorizontal: 24,
-		paddingVertical: 48,
+		padding: 24,
 		alignItems: 'center',
 	},
 	title: {
-		fontSize: 36,
+		fontFamily: Fonts.headline,
+		fontSize: 24,
 		fontWeight: '700',
 		color: Colors.dark.primary,
 		textAlign: 'center',
 		marginBottom: 12,
 	},
 	subtitle: {
-		fontSize: 16,
+		fontFamily: Fonts.body,
+		fontSize: 14,
 		color: Colors.dark.textSecondary,
 		textAlign: 'center',
 		marginBottom: 20,
 	},
 	input: {
 		width: '100%',
-		backgroundColor: Colors.dark.surface,
+		backgroundColor: Colors.dark.backgroundDeep,
 		borderWidth: 1,
 		borderColor: Colors.dark.border,
 		borderRadius: 8,
@@ -86,6 +88,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	trustText: {
+		fontFamily: Fonts.body,
 		fontSize: 12,
 		color: Colors.dark.textMuted,
 	},
