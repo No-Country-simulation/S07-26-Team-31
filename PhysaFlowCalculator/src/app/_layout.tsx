@@ -25,6 +25,7 @@ export default function RootLayout() {
 				<Stack>
 					<Stack.Screen name="index" options={{ headerShown: false }} />
 					<Stack.Screen name="basicResult" options={{ headerShown: false }} />
+					<Stack.Screen name="DepthAnalysis" options={{ headerShown: false }} />
 				</Stack>
 			</View>
 		</SafeAreaProvider>

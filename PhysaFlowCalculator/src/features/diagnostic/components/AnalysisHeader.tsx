@@ -5,58 +5,49 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Typography from '@/components/UI/Typography';
 import { Colors } from '@/constants/Colors';
 
-
 const AnalysisHeader = () => {
-  return (
-    <View style={styles.container}>
-      <Pressable style={styles.iconButton}>
-        <MaterialIcons
-          name="arrow-back"
-          size={24}
-          color={Colors.dark.primary}
-        />
-      </Pressable>
+	return (
+		<View style={styles.container}>
+			<Pressable style={styles.iconButton}>
+				<MaterialIcons
+					name="arrow-back"
+					size={24}
+					color={Colors.dark.primary}
+				/>
+			</Pressable>
 
-      <Typography
-        variant="headlineMd"
-        color={Colors.dark.primary}
-      >
-        PhysaFlow
-      </Typography>
+			<Typography variant="headlineMd" color={Colors.dark.primary}>
+				PhysaFlow
+			</Typography>
 
-      <Pressable style={styles.iconButton}>
-        <MaterialIcons
-          name="account-circle"
-          size={28}
-          color={Colors.dark.primary}
-        />
-      </Pressable>
-    </View>
-  );
+			<Pressable style={styles.iconButton}>
+				<MaterialIcons
+					name="account-circle"
+					size={28}
+					color={Colors.dark.primary}
+				/>
+			</Pressable>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    height: 56,
-    paddingHorizontal: 16,
+	container: {
+		height: 56,
+		paddingHorizontal: 16,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		borderBottomColor: Colors.dark.border,
+	},
 
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+	iconButton: {
+		width: 40,
+		height: 40,
 
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-
-    backgroundColor: Colors.dark.background,
-  },
-
-  iconButton: {
-    width: 40,
-    height: 40,
-
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 });
 
 export default AnalysisHeader;
