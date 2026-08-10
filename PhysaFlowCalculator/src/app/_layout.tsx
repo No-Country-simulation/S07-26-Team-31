@@ -1,9 +1,9 @@
-import { SplashScreen, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +24,7 @@ export default function RootLayout() {
 			<View style={styles.root}>
 				<Stack>
 					<Stack.Screen name="index" options={{ headerShown: false }} />
+					<Stack.Screen name="basicResult" options={{ headerShown: false }} />
 				</Stack>
 			</View>
 		</SafeAreaProvider>
