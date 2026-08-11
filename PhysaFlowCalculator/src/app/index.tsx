@@ -1,114 +1,120 @@
 import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { Ionicons } from '@expo/vector-icons';
-import Slider from '@react-native-community/slider';
-
+import CoolingOptionCard from '@/components/UI/CoolingOptionCard';
+import { useCalculatorStore, coolingTypeMap } from '@/store/calculator-store';
+import { calculateCapacity } from '@/services/calculator-api';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import LabeledSlider from '@/components/UI/LabeledSlider';
 
 export default function Index() {
 	const router = useRouter();
+	const {
+		facilitySize,
+		utilization,
+		coolingType,
+		isLoading,
+		setFacilitySize,
+		setUtilization,
+		setCoolingType,
+		setResult,
+		setLoading,
+		setError,
+	} = useCalculatorStore();
+
+	const coolingOptions = [
+		{ type: 'air', icon: 'reorder-three', label: 'Enfriamiento\npor aire' },
+		{ type: 'liquid', icon: 'water', label: 'Enfriamiento\nlíquido' },
+		{ type: 'immersion', icon: 'layers', label: 'Enfriamiento\ninmersión' },
+		{ type: 'hybrid', icon: 'git-merge', label: 'Enfriamiento\nhíbrido' },
+	] as const;
+	const handleCalculate = async () => {
+		if (!coolingType) {
+			setError('Seleccioná un tipo de enfriamiento');
+			return;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const data = await calculateCapacity({
+				capacidadInstalacionMw: facilitySize,
+				porcentajeUtilizacion: utilization,
+				tipoEnfriamiento: coolingTypeMap[coolingType],
+			});
+
+			setResult(data);
+			router.push('/basicResult');
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'No se pudo calcular.');
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
-		<Screen>
+		<Screen scrollable>
 			<View style={styles.container}>
 				<Text style={styles.title}>Calculador de capacidad</Text>
 				<Text style={styles.subtitle}>
 					Toma menos de 3 minutos optimizar su infraestructura.
 				</Text>
 			</View>
-			<View style={styles.counterContainer}>
-				<TextInput value="10" keyboardType="numeric" style={styles.input} />
 
-				<Text style={styles.suffix}>MW</Text>
-			</View>
 			<View style={{ marginBottom: 60 }}>
 				<View>
-					<Text style={{ color: '#fff' }}>Tamaño de almacen</Text>
-					<Slider
-						style={styles.slider}
-						minimumValue={0}
-						maximumValue={100}
-						value={40}
-						minimumTrackTintColor={Colors.dark.primary}
-						maximumTrackTintColor={Colors.dark.primary}
-						thumbTintColor={Colors.dark.primary}
+					<LabeledSlider
+						label="Tamaño de almacén"
+						value={facilitySize}
+						onChange={setFacilitySize}
+						min={1}
+						max={500}
+						suffix=" MW"
 					/>
 				</View>
 				<View>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'flex-end',
-						}}
-					>
-						<Text style={{ color: '#fff' }}>Uso</Text>
-						<Text style={{ color: Colors.dark.primary, fontSize: 30 }}>
-							40%
-						</Text>
+					<View>
+						<LabeledSlider
+							label="Uso"
+							value={utilization}
+							onChange={setUtilization}
+							min={0}
+							max={100}
+							suffix="%"
+						/>
 					</View>
-					<Slider
-						style={styles.slider}
-						minimumValue={0}
-						maximumValue={100}
-						value={40}
-						minimumTrackTintColor={Colors.dark.primary}
-						maximumTrackTintColor={Colors.dark.primary}
-						thumbTintColor={Colors.dark.primary}
-					/>
 				</View>
 				<Text style={{ color: '#fff', marginBottom: 30 }}>
 					Arquitectura de enfriamiento
 				</Text>
-				<View>
-					<View
-						style={{
-							flexDirection: 'row',
-							flexWrap: 'wrap',
-							justifyContent: 'center',
-							gap: 20,
-						}}
-					>
-						<View style={styles.optionContainer}>
-							<Ionicons
-								name="reorder-three"
-								size={28}
-								color={Colors.dark.primary}
-							/>
-							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} por aire
-							</Text>
-						</View>
-						<View style={styles.optionContainer}>
-							<Ionicons name="water" size={28} color={Colors.dark.primary} />
-							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} liquido
-							</Text>
-						</View>
-						<View style={styles.optionContainer}>
-							<Ionicons name="layers" size={28} color={Colors.dark.primary} />
-							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} inmersion
-							</Text>
-						</View>
-						<View style={styles.optionContainer}>
-							<Ionicons
-								name="git-merge"
-								size={28}
-								color={Colors.dark.primary}
-							/>
-							<Text style={{ color: '#fff', textAlign: 'center' }}>
-								Enfriamiento{'\n'} hibrido
-							</Text>
-						</View>
-					</View>
+				<View
+					style={{
+						flexDirection: 'row',
+						flexWrap: 'wrap',
+						justifyContent: 'center',
+						gap: 20,
+					}}
+				>
+					{coolingOptions.map(option => (
+						<CoolingOptionCard
+							key={option.type}
+							icon={option.icon}
+							label={option.label}
+							selected={coolingType === option.type}
+							onPress={() => setCoolingType(option.type)}
+						/>
+					))}
 				</View>
 			</View>
-			<Pressable style={styles.button} onPress={() => {
-				router.push('/basicResult');
-			}}>
-				<Text style={styles.buttonText}>Calcular</Text>
+			<Pressable
+				style={[styles.button, isLoading && { opacity: 0.6 }]}
+				onPress={handleCalculate}
+				disabled={isLoading}
+			>
+				<Text style={styles.buttonText}>
+					{isLoading ? 'Calculando...' : 'Calcular'}
+				</Text>
 			</Pressable>
 		</Screen>
 	);
