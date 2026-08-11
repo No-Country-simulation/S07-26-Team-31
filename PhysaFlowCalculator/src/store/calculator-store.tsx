@@ -6,11 +6,11 @@ export type CoolingType = 'air' | 'liquid' | 'immersion' | 'hybrid';
 export type CalculatorStore = {
 	facilitySize: number;
 	utilization: number;
-	coolingType: CoolingType | null;
 	setFacilitySize: (value: number) => void;
 	setUtilization: (value: number) => void;
-	setCoolingType: (value: CoolingType) => void;
 	reset: () => void;
+	coolingType: CoolingType | null;
+	setCoolingType: (value: CoolingType) => void;
 };
 
 const initialState = {
