@@ -3,12 +3,17 @@ import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { useCalculatorStore } from '@/store/calculator-store';
 
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import LabeledSlider from '@/components/UI/LabeledSlider';
 
 export default function Index() {
 	const router = useRouter();
+	const { facilitySize, utilization, setFacilitySize, setUtilization } =
+		useCalculatorStore();
+
 	return (
 		<Screen>
 			<View style={styles.container}>
@@ -24,39 +29,26 @@ export default function Index() {
 			</View>
 			<View style={{ marginBottom: 60 }}>
 				<View>
-					<Text style={{ color: '#fff' }}>Tamaño de almacen</Text>
-					<Slider
-						style={styles.slider}
-						minimumValue={0}
-						maximumValue={100}
-						value={40}
-						minimumTrackTintColor={Colors.dark.primary}
-						maximumTrackTintColor={Colors.dark.primary}
-						thumbTintColor={Colors.dark.primary}
+					<LabeledSlider
+						label="Tamaño de almacén"
+						value={facilitySize}
+						onChange={setFacilitySize}
+						min={1}
+						max={500}
+						suffix=" MW"
 					/>
 				</View>
 				<View>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'flex-end',
-						}}
-					>
-						<Text style={{ color: '#fff' }}>Uso</Text>
-						<Text style={{ color: Colors.dark.primary, fontSize: 30 }}>
-							40%
-						</Text>
+					<View>
+						<LabeledSlider
+							label="Uso"
+							value={utilization}
+							onChange={setUtilization}
+							min={0}
+							max={100}
+							suffix="%"
+						/>
 					</View>
-					<Slider
-						style={styles.slider}
-						minimumValue={0}
-						maximumValue={100}
-						value={40}
-						minimumTrackTintColor={Colors.dark.primary}
-						maximumTrackTintColor={Colors.dark.primary}
-						thumbTintColor={Colors.dark.primary}
-					/>
 				</View>
 				<Text style={{ color: '#fff', marginBottom: 30 }}>
 					Arquitectura de enfriamiento
@@ -105,9 +97,12 @@ export default function Index() {
 					</View>
 				</View>
 			</View>
-			<Pressable style={styles.button} onPress={() => {
-				router.push('/basicResult');
-			}}>
+			<Pressable
+				style={styles.button}
+				onPress={() => {
+					router.push('/basicResult');
+				}}
+			>
 				<Text style={styles.buttonText}>Calcular</Text>
 			</Pressable>
 		</Screen>
