@@ -1,58 +1,54 @@
+// components/features/diagnostic/components/MetricCard.tsx
 import Card from '@/components/UI/Card';
 import Typography from '@/components/UI/Typography';
 import { Colors } from '@/constants/Colors';
 import { StyleSheet, View } from 'react-native';
 
-
 type MetricCardProps = {
-  title: string;
-  value: string;
-  subtitle?: string;
-  valueColor?: string;
+	title: string;
+	value: string;
+	delta?: string;
+	isCritical?: boolean;
 };
 
-const MetricCard = ({
-  title,
-  value,
-  subtitle,
-  valueColor = Colors.dark.primary,
-}: MetricCardProps) => {
-  return (
-    <Card>
-      <View style={styles.container}>
-        <Typography
-          variant="label"
-          color={Colors.dark.textMuted}
-        >
-          {title}
-        </Typography>
-
-        <Typography
-          variant="dataLg"
-          color={valueColor}
-        >
-          {value}
-        </Typography>
-
-        {subtitle && (
-          <Typography
-            variant="bodySmall"
-            color={Colors.dark.textMuted}
-          >
-            {subtitle}
-          </Typography>
-        )}
-      </View>
-    </Card>
-  );
+const MetricCard = ({ title, value, delta, isCritical }: MetricCardProps) => {
+	return (
+		<Card style={styles.cardContainer}>
+			<Typography variant="label" color={Colors.dark.textMuted}>
+				{title}
+			</Typography>
+			<View style={styles.row}>
+				<Typography
+					variant="dataLg"
+					color={isCritical ? Colors.dark.error : Colors.dark.primaryLight}
+					style={isCritical ? styles.criticalText : undefined}
+				>
+					{value}
+				</Typography>
+				{delta && (
+					<Typography variant="dataMd" color={Colors.dark.error}>
+						{delta}
+					</Typography>
+				)}
+			</View>
+		</Card>
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 8,
-    minHeight: 90,
-    justifyContent: 'center',
-  },
+	cardContainer: {
+		justifyContent: 'space-evenly',
+		width: '48%',
+		height: 120,
+	},
+	row: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'baseline',
+	},
+	criticalText: {
+		fontSize: 30,
+	},
 });
 
 export default MetricCard;

@@ -1,14 +1,18 @@
+// components/features/diagnostic/components/AnalysisHeader.tsx
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 import Typography from '@/components/UI/Typography';
 import { Colors } from '@/constants/Colors';
 
 const AnalysisHeader = () => {
+	const router = useRouter();
+
 	return (
 		<View style={styles.container}>
-			<Pressable style={styles.iconButton}>
+			<Pressable style={styles.iconButton} onPress={() => router.back()}>
 				<MaterialIcons
 					name="arrow-back"
 					size={24}
@@ -40,11 +44,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		borderBottomColor: Colors.dark.border,
 	},
-
 	iconButton: {
 		width: 40,
 		height: 40,
-
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

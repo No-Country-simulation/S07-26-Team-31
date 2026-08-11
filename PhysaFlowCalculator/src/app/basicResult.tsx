@@ -1,4 +1,3 @@
-import BottomSheet from '@/components/UI/BottomSheet';
 import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import AnalysisHeader from '@/features/diagnostic/components/AnalysisHeader';
@@ -6,125 +5,69 @@ import BottomActions from '@/features/diagnostic/components/BottomActions';
 import FinancialCard from '@/features/diagnostic/components/FinancialCard';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
 import HeroSection from '@/features/diagnostic/components/HeroSection';
-import LeadCapture from '@/features/diagnostic/components/LeadCapture';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { useCalculatorStore } from '@/store/calculator-store';
+import { useEffect } from 'react';
+import MetricCard from '@/features/diagnostic/components/MetricCard';
 
 const BasicResult = () => {
 	const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
+	const { result } = useCalculatorStore();
+
+	useEffect(() => {
+		console.log('Resultado del cálculo:', result);
+	}, [result]);
+
 	return (
 		<Screen scrollable>
-			<AnalysisHeader
-			// title="PhysaFlow"
-			// onBack={...}
-			// rightIcon="account-circle"
-			// onRightPress={...}
-			/>
+			<AnalysisHeader />
 			<HeroSection
-			// status="Analysis Complete"
-			// percentage={34}
-			// title="Stranded Capacity"
-			// equivalent="3.4 MW"
+				percentage={result?.porcentajeCapacidadDesperdiciada ?? 0}
+				equivalentMw={result?.capacidadDesperdiciadaMw ?? 0}
 			/>
 			<FinancialCard
-			// title="Estimated Financial Exposure"
-			// value="$1.2M - $1.5M"
-			// subtitle="Annual Loss"
-			// benchmark="22% above industry average"
-			// source="Data Center Benchmark v4.2"
+				minLoss={result?.perdidaAnualMinima ?? 0}
+				maxLoss={result?.perdidaAnualMaxima ?? 0}
+				industryComparison={result?.comparacionIndustria ?? 0}
 			/>
 			<View style={styles.cardsContainer}>
-				<View style={styles.cardContainer}>
-					<Text style={styles.cardTitle}>PUE Factor</Text>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'baseline',
-						}}
-					>
-						<Text style={styles.accentText}>1.62</Text>
-						<Text style={styles.criticalText}>+0.12</Text>
-					</View>
-				</View>
-				<View style={styles.cardContainer}>
-					<Text style={styles.cardTitle}>CARBON COST</Text>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'baseline',
-						}}
-					>
-						<Text style={styles.accentText}>$45K/yr</Text>
-					</View>
-				</View>
-				<View style={styles.cardContainer}>
-					<Text style={styles.cardTitle}>UTILIZATION</Text>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'baseline',
-						}}
-					>
-						<Text style={styles.accentText}>66.2%</Text>
-					</View>
-				</View>
-				<View style={styles.cardContainer}>
-					<Text style={styles.cardTitle}>UTILIZATION</Text>
-					<View
-						style={{
-							flexDirection: 'row',
-							justifyContent: 'space-between',
-							alignItems: 'baseline',
-						}}
-					>
-						<Text style={styles.criticalTextAlt}>CRITICAL</Text>
-					</View>
-				</View>
+				<MetricCard
+					title="PUE Factor"
+					value={result?.pue.toFixed(2) ?? '—'}
+					delta={
+						result?.pueDelta ? `+${result.pueDelta.toFixed(2)}` : undefined
+					}
+				/>
+				<MetricCard
+					title="CARBON COST"
+					value={
+						result
+							? `$${(result.costoCarbonoAnual / 1000).toFixed(1)}K/yr`
+							: '—'
+					}
+				/>
+				<MetricCard
+					title="UTILIZATION"
+					value={result ? `${result.utilizacionIt.toFixed(1)}%` : '—'}
+				/>
+				<MetricCard
+					title="HEALTH STATUS"
+					value={result?.estadoSalud ?? '—'}
+					isCritical={
+						result?.estadoSalud === 'CRITICAL' ||
+						result?.estadoSalud === 'WARNING'
+					}
+				/>
 			</View>
-			<FunnelVisualization />
-			{/* <MetricsGrid
-                metrics={[
-                    {
-                        title: 'PUE Factor',
-                        value: '1.62',
-                        subtitle: '+0.12 Δ',
-                    },
-                    {
-                        title: 'Carbon Cost',
-                        value: '$45K',
-                        subtitle: '/year',
-                    },
-                    {
-                        title: 'Utilization',
-                        value: '66.2%',
-                    },
-                    {
-                        title: 'Health Score',
-                        value: 'Critical',
-                        valueColor: Colors.dark.error,
-                    },
-                ]}
-            /> */}
+			<FunnelVisualization
+				thermalLeakMw={result?.fugaTermicaMw ?? 0}
+				zombieServersMw={result?.servidoresZombiMw ?? 0}
+				redundancyOverheadMw={result?.sobrecostoRedundanciaMw ?? 0}
+			/>
 
 			<BottomActions onUnlockAnalysis={() => setLeadCaptureOpen(true)} />
-			<Pressable
-				style={styles.button}
-				onPress={() => {
-					router.push('/DepthAnalysis');
-				}}
-			>
-				<Text style={styles.buttonText}>Calcular</Text>
-			</Pressable>
-			{/* <BottomSheet
-				visible={leadCaptureOpen}
-				onClose={() => setLeadCaptureOpen(false)}
-			>
-				<LeadCapture />
-			</BottomSheet> */}
 		</Screen>
 	);
 };
