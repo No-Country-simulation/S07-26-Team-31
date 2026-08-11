@@ -1,25 +1,58 @@
 import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
-import { Ionicons } from '@expo/vector-icons';
-import { useCalculatorStore } from '@/store/calculator-store';
 import CoolingOptionCard from '@/components/UI/CoolingOptionCard';
-
+import { useCalculatorStore, coolingTypeMap } from '@/store/calculator-store';
+import { calculateCapacity } from '@/services/calculator-api';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import LabeledSlider from '@/components/UI/LabeledSlider';
 
 export default function Index() {
 	const router = useRouter();
-	const { facilitySize, utilization, setFacilitySize, setUtilization } =
-		useCalculatorStore();
-	const { coolingType, setCoolingType } = useCalculatorStore();
+	const {
+		facilitySize,
+		utilization,
+		coolingType,
+		isLoading,
+		setFacilitySize,
+		setUtilization,
+		setCoolingType,
+		setResult,
+		setLoading,
+		setError,
+	} = useCalculatorStore();
+
 	const coolingOptions = [
 		{ type: 'air', icon: 'reorder-three', label: 'Enfriamiento\npor aire' },
 		{ type: 'liquid', icon: 'water', label: 'Enfriamiento\nlíquido' },
 		{ type: 'immersion', icon: 'layers', label: 'Enfriamiento\ninmersión' },
 		{ type: 'hybrid', icon: 'git-merge', label: 'Enfriamiento\nhíbrido' },
 	] as const;
+	const handleCalculate = async () => {
+		if (!coolingType) {
+			setError('Seleccioná un tipo de enfriamiento');
+			return;
+		}
+
+		setLoading(true);
+		setError(null);
+
+		try {
+			const data = await calculateCapacity({
+				capacidadInstalacionMw: facilitySize,
+				porcentajeUtilizacion: utilization,
+				tipoEnfriamiento: coolingTypeMap[coolingType],
+			});
+
+			setResult(data);
+			router.push('/basicResult');
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'No se pudo calcular.');
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
 		<Screen scrollable>
 			<View style={styles.container}>
@@ -28,21 +61,7 @@ export default function Index() {
 					Toma menos de 3 minutos optimizar su infraestructura.
 				</Text>
 			</View>
-			<View style={styles.counterContainer}>
-				<TextInput
-					value={String(facilitySize)}
-					onChangeText={text => {
-						const num = parseInt(text, 10);
-						if (!isNaN(num)) {
-							setFacilitySize(num);
-						} else if (text === '') {
-							setFacilitySize(0);
-						}
-					}}
-					keyboardType="numeric"
-					style={styles.input}
-				/>
-			</View>
+
 			<View style={{ marginBottom: 60 }}>
 				<View>
 					<LabeledSlider
@@ -89,12 +108,13 @@ export default function Index() {
 				</View>
 			</View>
 			<Pressable
-				style={styles.button}
-				onPress={() => {
-					router.push('/basicResult');
-				}}
+				style={[styles.button, isLoading && { opacity: 0.6 }]}
+				onPress={handleCalculate}
+				disabled={isLoading}
 			>
-				<Text style={styles.buttonText}>Calcular</Text>
+				<Text style={styles.buttonText}>
+					{isLoading ? 'Calculando...' : 'Calcular'}
+				</Text>
 			</Pressable>
 		</Screen>
 	);
