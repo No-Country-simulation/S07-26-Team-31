@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/calculations")
@@ -33,9 +32,9 @@ public class CalculationController {
         return ResponseEntity.ok(calculationService.obtenerPorToken(token));
     }
 
-    @PatchMapping("/{id}/email")
-    public ResponseEntity<CalculationResponse> patchEmail(@PathVariable UUID id,
+    @PatchMapping("/{token}/email")
+    public ResponseEntity<CalculationResponse> patchEmail(@PathVariable String token,
                                                           @Valid @RequestBody UpdateEmailRequest request) {
-        return ResponseEntity.ok(calculationService.actualizarCorreo(id, request.getEmail()));
+        return ResponseEntity.ok(calculationService.actualizarCorreo(token, request.getEmail()));
     }
 }
