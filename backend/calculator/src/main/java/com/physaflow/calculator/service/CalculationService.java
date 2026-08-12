@@ -8,8 +8,7 @@ import com.physaflow.calculator.model.Calculo;
 import com.physaflow.calculator.repository.CalculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.Set;
-import java.util.UUID;
+
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -119,9 +118,13 @@ public class CalculationService {
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el token: " + token));
     }
 
-    public CalculationResponse actualizarCorreo(UUID id, String correo) {
-        Calculo calculo = calculoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el ID: " + id));
+    public CalculationResponse actualizarCorreo(String token, String correo) {
+        Calculo calculo = calculoRepository.findByTokenCompartido(token)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró ningún cálculo con el token: " + token));
+
+        if (calculo.getCorreo() != null && !calculo.getCorreo().isBlank()) {
+            throw new IllegalArgumentException("Este cálculo ya tiene un correo asociado.");
+        }
 
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);

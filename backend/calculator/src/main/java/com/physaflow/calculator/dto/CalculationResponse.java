@@ -2,14 +2,12 @@ package com.physaflow.calculator.dto;
 
 import lombok.*;
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CalculationResponse {
-    private UUID id;
     private String tokenCompartido;
     private double capacidadInstalacionMw;
     private double porcentajeUtilizacion;
