@@ -1,18 +1,11 @@
-import BottomSheet from '@/components/UI/BottomSheet';
 import ScenarioToggle from '@/components/UI/ScenarioToggle';
 import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import AnalysisHeader from '@/features/diagnostic/components/AnalysisHeader';
-import BottomActions from '@/features/diagnostic/components/BottomActions';
-import FinancialCard from '@/features/diagnostic/components/FinancialCard';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
-import HeroSection from '@/features/diagnostic/components/HeroSection';
-import LeadCapture from '@/features/diagnostic/components/LeadCapture';
-import { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 const BasicResult = () => {
-	const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
 	return (
 		<Screen style={{ gap: 32 }} scrollable>
 			<AnalysisHeader
@@ -40,7 +33,6 @@ const BasicResult = () => {
 					</View>
 				</View>
 			</View>
-			<LeadCapture />
 		</Screen>
 	);
 };
