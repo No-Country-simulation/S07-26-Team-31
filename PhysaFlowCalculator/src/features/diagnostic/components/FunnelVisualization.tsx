@@ -5,7 +5,17 @@ import Arrow from '@/assets/images/arrow.svg';
 import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
 
-const FunnelVisualization = () => {
+type FunnelVisualizationProps = {
+	thermalLeakMw: number;
+	zombieServersMw: number;
+	redundancyOverheadMw: number;
+};
+
+const FunnelVisualization = ({
+	thermalLeakMw,
+	zombieServersMw,
+	redundancyOverheadMw,
+}: FunnelVisualizationProps) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>PhysaFlow Signature</Text>
@@ -39,30 +49,37 @@ const FunnelVisualization = () => {
 					/>
 				</Svg>
 
-				{/* Flecha 1: base pegada al borde superior de Facility (~x80,y60) */}
+				{/* Flecha 1: Thermal Leak */}
 				<View style={[styles.leak, { left: 55, top: 8 }]}>
 					<Arrow width={50} height={50} />
 					<View style={styles.leakLabel}>
 						<Text style={styles.leakText}>Thermal</Text>
 						<Text style={styles.leakText}>Leak</Text>
+						<Text style={styles.leakValue}>{thermalLeakMw.toFixed(2)} MW</Text>
 					</View>
 				</View>
 
-				{/* Flecha 2: base pegada al borde superior de IT Load (~x170,y77) */}
+				{/* Flecha 2: Zombie Servers */}
 				<View style={[styles.leak, { left: 148, top: 27 }]}>
 					<Arrow width={44} height={44} />
 					<View style={styles.leakLabel}>
 						<Text style={styles.leakText}>Zombie</Text>
 						<Text style={styles.leakText}>Servers</Text>
+						<Text style={styles.leakValue}>
+							{zombieServersMw.toFixed(2)} MW
+						</Text>
 					</View>
 				</View>
 
-				{/* Flecha 3: base pegada al borde superior de Workload (~x255,y90) */}
+				{/* Flecha 3: Redundancy Overhead */}
 				<View style={[styles.leak, { left: 235, top: 44 }]}>
 					<Arrow width={38} height={38} />
 					<View style={styles.leakLabelNarrow}>
 						<Text style={styles.leakText}>Redundancy</Text>
 						<Text style={styles.leakText}>Overhead</Text>
+						<Text style={styles.leakValue}>
+							{redundancyOverheadMw.toFixed(2)} MW
+						</Text>
 					</View>
 				</View>
 			</View>
@@ -83,7 +100,7 @@ const styles = StyleSheet.create({
 		padding: 16,
 		borderWidth: 1,
 		borderColor: Colors.dark.border,
-		overflow: 'hidden', // evita que cualquier resto se salga del card
+		overflow: 'hidden',
 	},
 	title: {
 		fontFamily: Fonts.body,
@@ -106,7 +123,7 @@ const styles = StyleSheet.create({
 	},
 	leakLabelNarrow: {
 		marginLeft: 2,
-		maxWidth: 70, // fuerza el wrap para que no se salga del card
+		maxWidth: 70,
 	},
 	leakText: {
 		fontFamily: Fonts.body,
@@ -114,6 +131,13 @@ const styles = StyleSheet.create({
 		fontWeight: '600',
 		color: Colors.dark.text,
 		lineHeight: 13,
+	},
+	leakValue: {
+		fontFamily: Fonts.body,
+		fontSize: 9,
+		fontWeight: '600',
+		color: Colors.dark.primary,
+		marginTop: 1,
 	},
 	layerLabels: {
 		flexDirection: 'row',
