@@ -4,27 +4,34 @@ import { Colors } from '@/constants/Colors';
 import AnalysisHeader from '@/features/diagnostic/components/AnalysisHeader';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
 import { StyleSheet, View, Text } from 'react-native';
+import { useCalculatorStore } from '@/store/calculator-store';
 
-const BasicResult = () => {
+const DepthAnalysis = () => {
+	const { result } = useCalculatorStore();
+
+	const wastedCapacity = result?.porcentajeCapacidadDesperdiciada ?? 0;
+
 	return (
 		<Screen style={{ gap: 32 }} scrollable>
-			<AnalysisHeader
-			// title="PhysaFlow"
-			// onBack={...}
-			// rightIcon="account-circle"
-			// onRightPress={...}
-			/>
+			<AnalysisHeader />
 			<ScenarioToggle />
-			<FunnelVisualization />
+			<FunnelVisualization
+				thermalLeakMw={result?.fugaTermicaMw ?? 0}
+				zombieServersMw={result?.servidoresZombiMw ?? 0}
+				redundancyOverheadMw={result?.sobrecostoRedundanciaMw ?? 0}
+			/>
 
 			<View style={styles.cardsContainer}>
 				<View style={styles.cardContainer}>
-					<Text style={styles.cardTitle}>TOTAL EFFICIENCY</Text>
-					<Text style={styles.accentText}>42.5%</Text>
+					<Text style={styles.cardTitle}>WASTED CAPACITY</Text>
+					<Text style={styles.accentText}>{wastedCapacity.toFixed(1)}%</Text>
 					<View style={styles.track}>
-						<View style={[styles.fill, { width: '42.5%' }]} />
+						<View style={[styles.fill, { width: `${wastedCapacity}%` }]} />
 					</View>
 				</View>
+
+				{/* NOTA: el backend no devuelve ningún campo de latencia.
+            Card pendiente de definir hasta que se agregue ese dato. */}
 				<View style={styles.cardContainer}>
 					<Text style={styles.cardTitle}>OPERATIONAL LATENCY</Text>
 					<Text style={styles.accentText}>2.4ms</Text>
@@ -86,4 +93,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default BasicResult;
+export default DepthAnalysis;

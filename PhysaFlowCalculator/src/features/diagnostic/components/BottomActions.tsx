@@ -1,17 +1,15 @@
+// components/features/diagnostic/components/BottomActions.tsx
 import Button from '@/components/UI/Button';
 import { Colors } from '@/constants/Colors';
 import { useCalculatorStore } from '@/store/calculator-store';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Share, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, Share, StyleSheet, View } from 'react-native';
 import LeadCapture from './LeadCapture';
 import { useState } from 'react';
 
-type BottomActionsProps = {
-	onUnlockAnalysis: () => void;
-};
-const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
-const BottomActions = ({ onUnlockAnalysis }: BottomActionsProps) => {
+const BottomActions = () => {
 	const { result } = useCalculatorStore();
+	const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
 
 	const handleShare = async () => {
 		if (!result?.tokenCompartido) return;
@@ -29,7 +27,6 @@ const BottomActions = ({ onUnlockAnalysis }: BottomActionsProps) => {
 
 	return (
 		<>
-			<LeadCapture />
 			<View style={styles.container}>
 				<Button
 					title="Share Result"
@@ -40,8 +37,30 @@ const BottomActions = ({ onUnlockAnalysis }: BottomActionsProps) => {
 					}
 				/>
 
-				<Button title="Unlock Complete Analysis" onPress={onUnlockAnalysis} />
+				<Button
+					title="Unlock Complete Analysis"
+					onPress={() => setLeadCaptureOpen(true)}
+				/>
 			</View>
+
+			<Modal
+				visible={leadCaptureOpen}
+				transparent
+				animationType="slide"
+				onRequestClose={() => setLeadCaptureOpen(false)}
+			>
+				<Pressable
+					style={styles.overlay}
+					onPress={() => setLeadCaptureOpen(false)}
+				>
+					<Pressable
+						style={styles.modalContent}
+						onPress={e => e.stopPropagation()}
+					>
+						<LeadCapture onClose={() => setLeadCaptureOpen(false)} />
+					</Pressable>
+				</Pressable>
+			</Modal>
 		</>
 	);
 };
@@ -51,6 +70,14 @@ const styles = StyleSheet.create({
 		gap: 16,
 		marginTop: 24,
 		marginBottom: 32,
+	},
+	overlay: {
+		flex: 1,
+		backgroundColor: 'rgba(0, 0, 0, 0.6)',
+		justifyContent: 'flex-end',
+	},
+	modalContent: {
+		width: '100%',
 	},
 });
 

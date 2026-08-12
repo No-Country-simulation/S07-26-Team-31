@@ -5,20 +5,14 @@ import BottomActions from '@/features/diagnostic/components/BottomActions';
 import FinancialCard from '@/features/diagnostic/components/FinancialCard';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
 import HeroSection from '@/features/diagnostic/components/HeroSection';
-import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useCalculatorStore } from '@/store/calculator-store';
 import { useEffect } from 'react';
 import MetricCard from '@/features/diagnostic/components/MetricCard';
 
 const BasicResult = () => {
-	const [leadCaptureOpen, setLeadCaptureOpen] = useState(false);
 	const { result } = useCalculatorStore();
-
-	useEffect(() => {
-		console.log('Resultado del cálculo:', result);
-	}, [result]);
 
 	return (
 		<Screen scrollable>
@@ -67,7 +61,7 @@ const BasicResult = () => {
 				redundancyOverheadMw={result?.sobrecostoRedundanciaMw ?? 0}
 			/>
 
-			<BottomActions onUnlockAnalysis={() => setLeadCaptureOpen(true)} />
+			<BottomActions />
 		</Screen>
 	);
 };
