@@ -2,6 +2,7 @@ package com.physaflow.calculator.controller;
 
 import com.physaflow.calculator.dto.CalculationRequest;
 import com.physaflow.calculator.dto.CalculationResponse;
+import com.physaflow.calculator.dto.ReportResponse;
 import com.physaflow.calculator.dto.UpdateEmailRequest;
 import com.physaflow.calculator.service.CalculationService;
 import jakarta.validation.Valid;
@@ -36,5 +37,13 @@ public class CalculationController {
     public ResponseEntity<CalculationResponse> patchEmail(@PathVariable String token,
                                                           @Valid @RequestBody UpdateEmailRequest request) {
         return ResponseEntity.ok(calculationService.actualizarCorreo(token, request.getEmail()));
+    }
+
+    @PostMapping("/{token}/compare")
+    public ResponseEntity<ReportResponse> generateReport(
+            @PathVariable String token,
+            @Valid @RequestBody UpdateEmailRequest request
+    ) {
+        return ResponseEntity.ok(calculationService.generarReporte(token, request.getEmail()));
     }
 }

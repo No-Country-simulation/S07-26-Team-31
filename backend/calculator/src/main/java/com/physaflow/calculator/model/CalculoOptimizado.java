@@ -1,24 +1,25 @@
 package com.physaflow.calculator.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "calculos")
+@Table(name = "calculos_optimizados")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Calculo {
+public class CalculoOptimizado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(name = "token_compartido", unique = true, nullable = false)
-    private String tokenCompartido;
 
     @Column(name = "capacidad_instalacion_mw", nullable = false)
     private double capacidadInstalacionMw;
@@ -27,7 +28,7 @@ public class Calculo {
     private double porcentajeUtilizacion;
 
     @Column(name = "tipo_enfriamiento", nullable = false)
-    private String tipoEnfriamiento;   // "aire", "liquido", "gratuito", hibrido, inmersion
+    private String tipoEnfriamiento; // "aire", "liquido", "gratuito", hibrido, inmersion
 
     @Column(name = "porcentaje_capacidad_desperdiciada")
     private double porcentajeCapacidadDesperdiciada;
@@ -68,15 +69,11 @@ public class Calculo {
     @Column(name = "sobrecosto_redundancia_mw")
     private double sobrecostoRedundanciaMw;
 
-    @Column(name = "correo")
-    private String correo;
-
     @Column(name = "creado_en", updatable = false)
     private Instant creadoEn;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "calculo_optimizado_id", referencedColumnName = "id", unique = true)
-    private CalculoOptimizado calculoOptimizado;
+    @OneToOne(mappedBy = "calculoOptimizado")
+    private Calculo calculo;
 
     @PrePersist
     protected void onCreate() {
