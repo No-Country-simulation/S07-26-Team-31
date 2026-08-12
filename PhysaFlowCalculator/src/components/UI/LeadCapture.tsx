@@ -1,9 +1,71 @@
 // components/LeadCapture.tsx
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import {
+	View,
+	Text,
+	TextInput,
+	Pressable,
+	StyleSheet,
+	ActivityIndicator,
+} from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Fonts } from '@/constants/Fonts';
+import { useCalculatorStore } from '@/store/calculator-store';
+import { updateCalculationEmail } from '@/services/calculator-api';
 
-const LeadCapture = () => {
+type LeadCaptureProps = {
+	onClose?: () => void;
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const LeadCapture = ({ onClose }: LeadCaptureProps) => {
+	const { result, setResult } = useCalculatorStore();
+	const [email, setEmail] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState(false);
+
+	const handleSubmit = async () => {
+		if (!EMAIL_REGEX.test(email)) {
+			setError('Ingresá un email válido');
+			return;
+		}
+
+		if (!result?.id) {
+			setError('No hay un cálculo activo');
+			return;
+		}
+
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const updated = await updateCalculationEmail(result.id, email);
+			setResult(updated);
+			setSuccess(true);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'No se pudo enviar');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	if (success) {
+		return (
+			<View style={styles.container}>
+				<Text style={styles.title}>¡Listo!</Text>
+				<Text style={styles.subtitle}>
+					Te enviamos el reporte completo a {email}.
+				</Text>
+				{onClose && (
+					<Pressable style={styles.button} onPress={onClose}>
+						<Text style={styles.buttonText}>CERRAR</Text>
+					</Pressable>
+				)}
+			</View>
+		);
+	}
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Obtén el análisis completo</Text>
@@ -17,11 +79,23 @@ const LeadCapture = () => {
 				placeholderTextColor={Colors.dark.textMuted}
 				keyboardType="email-address"
 				autoCapitalize="none"
+				value={email}
+				onChangeText={setEmail}
 				style={styles.input}
 			/>
 
-			<Pressable style={styles.button}>
-				<Text style={styles.buttonText}>ENVIARME EL REPORTE</Text>
+			{error && <Text style={styles.errorText}>{error}</Text>}
+
+			<Pressable
+				style={[styles.button, isLoading && { opacity: 0.6 }]}
+				onPress={handleSubmit}
+				disabled={isLoading}
+			>
+				{isLoading ? (
+					<ActivityIndicator color={Colors.dark.background} />
+				) : (
+					<Text style={styles.buttonText}>ENVIARME EL REPORTE</Text>
+				)}
 			</Pressable>
 
 			<View style={styles.trustRow}>
@@ -35,31 +109,30 @@ const LeadCapture = () => {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: Colors.dark.surface,
+		backgroundColor: Colors.dark.card,
 		borderTopWidth: 2,
 		borderTopColor: Colors.dark.primary,
 		borderRadius: 12,
-		padding: 24,
+		paddingHorizontal: 24,
+		paddingVertical: 48,
 		alignItems: 'center',
 	},
 	title: {
-		fontFamily: Fonts.headline,
-		fontSize: 24,
+		fontSize: 36,
 		fontWeight: '700',
 		color: Colors.dark.primary,
 		textAlign: 'center',
 		marginBottom: 12,
 	},
 	subtitle: {
-		fontFamily: Fonts.body,
-		fontSize: 14,
+		fontSize: 16,
 		color: Colors.dark.textSecondary,
 		textAlign: 'center',
 		marginBottom: 20,
 	},
 	input: {
 		width: '100%',
-		backgroundColor: Colors.dark.backgroundDeep,
+		backgroundColor: Colors.dark.surface,
 		borderWidth: 1,
 		borderColor: Colors.dark.border,
 		borderRadius: 8,
@@ -68,6 +141,12 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: Colors.dark.text,
 		marginBottom: 16,
+	},
+	errorText: {
+		color: Colors.dark.error,
+		fontSize: 13,
+		marginBottom: 12,
+		textAlign: 'center',
 	},
 	button: {
 		width: '100%',
@@ -88,7 +167,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	trustText: {
-		fontFamily: Fonts.body,
 		fontSize: 12,
 		color: Colors.dark.textMuted,
 	},

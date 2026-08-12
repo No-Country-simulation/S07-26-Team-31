@@ -1,8 +1,58 @@
 // components/LeadCapture.tsx
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import {
+	View,
+	Text,
+	TextInput,
+	Pressable,
+	StyleSheet,
+	ActivityIndicator,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import { useCalculatorStore } from '@/store/calculator-store';
+import { updateCalculationEmail } from '@/services/calculator-api';
 
-const LeadCapture = () => {
+type LeadCaptureProps = {
+	onClose?: () => void;
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const LeadCapture = ({ onClose }: LeadCaptureProps) => {
+	const router = useRouter();
+	const { result, setResult } = useCalculatorStore();
+	const [email, setEmail] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const handleSubmit = async () => {
+		if (!EMAIL_REGEX.test(email)) {
+			setError('Ingresá un email válido');
+			return;
+		}
+
+		if (!result?.id) {
+			setError('No hay un cálculo activo');
+			return;
+		}
+
+		setIsLoading(true);
+		setError(null);
+
+		try {
+			const updated = await updateCalculationEmail(result.id, email);
+			setResult(updated);
+
+			onClose?.(); // cierra el modal
+			router.push('/depthAnalysis'); // navega con los datos ya en el store
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'No se pudo enviar');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Obtén el análisis completo</Text>
@@ -16,11 +66,23 @@ const LeadCapture = () => {
 				placeholderTextColor={Colors.dark.textMuted}
 				keyboardType="email-address"
 				autoCapitalize="none"
+				value={email}
+				onChangeText={setEmail}
 				style={styles.input}
 			/>
 
-			<Pressable style={styles.button}>
-				<Text style={styles.buttonText}>ENVIARME EL REPORTE</Text>
+			{error && <Text style={styles.errorText}>{error}</Text>}
+
+			<Pressable
+				style={[styles.button, isLoading && { opacity: 0.6 }]}
+				onPress={handleSubmit}
+				disabled={isLoading}
+			>
+				{isLoading ? (
+					<ActivityIndicator color={Colors.dark.background} />
+				) : (
+					<Text style={styles.buttonText}>ENVIARME EL REPORTE</Text>
+				)}
 			</Pressable>
 
 			<View style={styles.trustRow}>
@@ -66,6 +128,12 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: Colors.dark.text,
 		marginBottom: 16,
+	},
+	errorText: {
+		color: Colors.dark.error,
+		fontSize: 13,
+		marginBottom: 12,
+		textAlign: 'center',
 	},
 	button: {
 		width: '100%',

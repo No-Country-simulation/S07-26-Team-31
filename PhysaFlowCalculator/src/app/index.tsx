@@ -15,6 +15,7 @@ export default function Index() {
 		utilization,
 		coolingType,
 		isLoading,
+		error,
 		setFacilitySize,
 		setUtilization,
 		setCoolingType,
@@ -38,13 +39,14 @@ export default function Index() {
 		setLoading(true);
 		setError(null);
 
-		try {
-			const data = await calculateCapacity({
-				capacidadInstalacionMw: facilitySize,
-				porcentajeUtilizacion: utilization,
-				tipoEnfriamiento: coolingTypeMap[coolingType],
-			});
+		const payload = {
+			capacidadInstalacionMw: facilitySize,
+			porcentajeUtilizacion: utilization,
+			tipoEnfriamiento: coolingTypeMap[coolingType],
+		};
 
+		try {
+			const data = await calculateCapacity(payload);
 			setResult(data);
 			router.push('/basicResult');
 		} catch (err) {
@@ -61,7 +63,17 @@ export default function Index() {
 					Toma menos de 3 minutos optimizar su infraestructura.
 				</Text>
 			</View>
-
+			{error && (
+				<Text
+					style={{
+						color: Colors.dark.error,
+						textAlign: 'center',
+						marginTop: 8,
+					}}
+				>
+					{error}
+				</Text>
+			)}
 			<View style={{ marginBottom: 60 }}>
 				<View>
 					<LabeledSlider
