@@ -15,5 +15,5 @@ public class CalculationRequest {
     private Double porcentajeUtilizacion;
 
     @NotBlank
-    private String tipoEnfriamiento;  // "aire", "liquido", "gratuito"
+    private String tipoEnfriamiento;
 }
