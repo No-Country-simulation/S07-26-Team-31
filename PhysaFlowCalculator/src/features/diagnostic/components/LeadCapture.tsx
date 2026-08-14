@@ -45,7 +45,7 @@ const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 			setCompareResult(compareData);
 
 			onClose?.();
-			router.push('/depthAnalysis');
+			router.push('/DepthAnalysis');
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'No se pudo enviar');
 		} finally {

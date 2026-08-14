@@ -3,11 +3,23 @@ import Screen from '@/components/UI/Screen';
 import { Colors } from '@/constants/Colors';
 import AnalysisHeader from '@/features/diagnostic/components/AnalysisHeader';
 import FunnelVisualization from '@/features/diagnostic/components/FunnelVisualization';
-import { StyleSheet, View, Text } from 'react-native';
+import {
+	StyleSheet,
+	View,
+	Text,
+	Pressable,
+	ActivityIndicator,
+} from 'react-native';
 import { useCalculatorStore } from '@/store/calculator-store';
+import { downloadPdf, savePdfToDownloads } from '@/services/calculator-api';
+import { useState } from 'react';
+import * as Sharing from 'expo-sharing';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const DepthAnalysis = () => {
 	const { compareResult, activeScenario } = useCalculatorStore();
+	const [isDownloading, setIsDownloading] = useState(false);
+	const [downloadError, setDownloadError] = useState<string | null>(null);
 
 	const activeData =
 		activeScenario === 'optimized'
@@ -15,6 +27,29 @@ const DepthAnalysis = () => {
 			: compareResult?.calculoActual;
 
 	const wastedCapacity = activeData?.porcentajeCapacidadDesperdiciada ?? 0;
+
+	const handleDownloadPdf = async () => {
+		if (!compareResult?.nombrePdf) {
+			setDownloadError('No hay un PDF disponible');
+			return;
+		}
+
+		setIsDownloading(true);
+		setDownloadError(null);
+
+		try {
+			const fileUri = await downloadPdf(compareResult.nombrePdf);
+			const saved = await savePdfToDownloads(fileUri, compareResult.nombrePdf);
+
+			if (!saved) {
+				setDownloadError('Necesitás dar permiso para guardar el archivo');
+			}
+		} catch (err) {
+			setDownloadError('No se pudo descargar el PDF');
+		} finally {
+			setIsDownloading(false);
+		}
+	};
 
 	return (
 		<Screen style={{ gap: 32 }} scrollable>
@@ -43,6 +78,27 @@ const DepthAnalysis = () => {
 					</View>
 				</View>
 			</View>
+
+			<Pressable
+				style={[styles.downloadButton, isDownloading && { opacity: 0.6 }]}
+				onPress={handleDownloadPdf}
+				disabled={isDownloading || !compareResult?.nombrePdf}
+			>
+				{isDownloading ? (
+					<ActivityIndicator color={Colors.dark.background} />
+				) : (
+					<>
+						<MaterialIcons
+							name="picture-as-pdf"
+							size={20}
+							color={Colors.dark.background}
+						/>
+						<Text style={styles.downloadButtonText}>DESCARGAR PDF</Text>
+					</>
+				)}
+			</Pressable>
+
+			{downloadError && <Text style={styles.errorText}>{downloadError}</Text>}
 		</Screen>
 	);
 };
@@ -89,6 +145,26 @@ const styles = StyleSheet.create({
 		height: '100%',
 		backgroundColor: Colors.dark.primary,
 		borderRadius: 2,
+	},
+	downloadButton: {
+		flexDirection: 'row',
+		backgroundColor: Colors.dark.primary,
+		paddingVertical: 16,
+		borderRadius: 8,
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 8,
+	},
+	downloadButtonText: {
+		color: Colors.dark.background,
+		fontWeight: '700',
+		fontSize: 16,
+		letterSpacing: 1,
+	},
+	errorText: {
+		color: Colors.dark.error,
+		fontSize: 13,
+		textAlign: 'center',
 	},
 });
 
