@@ -8,10 +8,10 @@ import {
 	StyleSheet,
 	ActivityIndicator,
 } from 'react-native';
+import { compareScenarios } from '@/services/calculator-api';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useCalculatorStore } from '@/store/calculator-store';
-import { updateCalculationEmail } from '@/services/calculator-api';
 
 type LeadCaptureProps = {
 	onClose?: () => void;
@@ -21,7 +21,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 	const router = useRouter();
-	const { result, setResult } = useCalculatorStore();
+	const { result, setCompareResult } = useCalculatorStore();
 	const [email, setEmail] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -41,14 +41,11 @@ const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 		setError(null);
 
 		try {
-			const updated = await updateCalculationEmail(
-				result.tokenCompartido,
-				email,
-			);
-			setResult(updated);
+			const compareData = await compareScenarios(result.tokenCompartido, email);
+			setCompareResult(compareData);
 
-			onClose?.(); // cierra el modal
-			router.push('/depthAnalysis'); // navega con los datos ya en el store
+			onClose?.();
+			router.push('/depthAnalysis');
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'No se pudo enviar');
 		} finally {

@@ -7,18 +7,23 @@ import { StyleSheet, View, Text } from 'react-native';
 import { useCalculatorStore } from '@/store/calculator-store';
 
 const DepthAnalysis = () => {
-	const { result } = useCalculatorStore();
+	const { compareResult, activeScenario } = useCalculatorStore();
 
-	const wastedCapacity = result?.porcentajeCapacidadDesperdiciada ?? 0;
+	const activeData =
+		activeScenario === 'optimized'
+			? compareResult?.calculoOptimizado
+			: compareResult?.calculoActual;
+
+	const wastedCapacity = activeData?.porcentajeCapacidadDesperdiciada ?? 0;
 
 	return (
 		<Screen style={{ gap: 32 }} scrollable>
 			<AnalysisHeader />
 			<ScenarioToggle />
 			<FunnelVisualization
-				thermalLeakMw={result?.fugaTermicaMw ?? 0}
-				zombieServersMw={result?.servidoresZombiMw ?? 0}
-				redundancyOverheadMw={result?.sobrecostoRedundanciaMw ?? 0}
+				thermalLeakMw={activeData?.fugaTermicaMw ?? 0}
+				zombieServersMw={activeData?.servidoresZombiMw ?? 0}
+				redundancyOverheadMw={activeData?.sobrecostoRedundanciaMw ?? 0}
 			/>
 
 			<View style={styles.cardsContainer}>
@@ -30,8 +35,6 @@ const DepthAnalysis = () => {
 					</View>
 				</View>
 
-				{/* NOTA: el backend no devuelve ningún campo de latencia.
-            Card pendiente de definir hasta que se agregue ese dato. */}
 				<View style={styles.cardContainer}>
 					<Text style={styles.cardTitle}>OPERATIONAL LATENCY</Text>
 					<Text style={styles.accentText}>2.4ms</Text>
@@ -86,10 +89,6 @@ const styles = StyleSheet.create({
 		height: '100%',
 		backgroundColor: Colors.dark.primary,
 		borderRadius: 2,
-	},
-	criticalTextAlt: {
-		color: Colors.dark.error,
-		fontSize: 32,
 	},
 });
 

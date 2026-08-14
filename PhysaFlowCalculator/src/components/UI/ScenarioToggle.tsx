@@ -1,17 +1,51 @@
-// components/ScenarioToggle.tsx
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { Fonts } from '@/constants/Fonts';
+import { useCalculatorStore } from '@/store/calculator-store';
 
 const ScenarioToggle = () => {
+	const { activeScenario, setActiveScenario, compareResult } =
+		useCalculatorStore();
+
+	// Si todavía no llegó el compare, no tiene sentido mostrar "Optimized" como opción usable
+	const hasOptimizedData = !!compareResult;
+
 	return (
 		<View style={styles.container}>
-			<Pressable style={[styles.option, styles.optionActive]}>
-				<Text style={styles.textActive}>CURRENT</Text>
+			<Pressable
+				style={[
+					styles.option,
+					activeScenario === 'current' && styles.optionActive,
+				]}
+				onPress={() => setActiveScenario('current')}
+			>
+				<Text
+					style={
+						activeScenario === 'current'
+							? styles.textActive
+							: styles.textInactive
+					}
+				>
+					CURRENT
+				</Text>
 			</Pressable>
 
-			<Pressable style={styles.option}>
-				<Text style={styles.textInactive}>OPTIMIZED</Text>
+			<Pressable
+				style={[
+					styles.option,
+					activeScenario === 'optimized' && styles.optionActive,
+				]}
+				onPress={() => hasOptimizedData && setActiveScenario('optimized')}
+				disabled={!hasOptimizedData}
+			>
+				<Text
+					style={
+						activeScenario === 'optimized'
+							? styles.textActive
+							: styles.textInactive
+					}
+				>
+					OPTIMIZED
+				</Text>
 			</Pressable>
 		</View>
 	);
