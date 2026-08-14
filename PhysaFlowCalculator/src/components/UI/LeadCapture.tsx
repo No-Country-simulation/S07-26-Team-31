@@ -1,4 +1,3 @@
-// components/LeadCapture.tsx
 import { useState } from 'react';
 import {
 	View,
@@ -8,9 +7,10 @@ import {
 	StyleSheet,
 	ActivityIndicator,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { useCalculatorStore } from '@/store/calculator-store';
-import { updateCalculationEmail } from '@/services/calculator-api';
+import { compareScenarios } from '@/services/calculator-api';
 
 type LeadCaptureProps = {
 	onClose?: () => void;
@@ -19,11 +19,11 @@ type LeadCaptureProps = {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LeadCapture = ({ onClose }: LeadCaptureProps) => {
-	const { result, setResult } = useCalculatorStore();
+	const router = useRouter();
+	const { result, setCompareResult } = useCalculatorStore();
 	const [email, setEmail] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState(false);
 
 	const handleSubmit = async () => {
 		if (!EMAIL_REGEX.test(email)) {
@@ -40,34 +40,17 @@ const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 		setError(null);
 
 		try {
-			const updated = await updateCalculationEmail(
-				result.tokenCompartido,
-				email,
-			);
-			setResult(updated);
-			setSuccess(true);
+			const compareData = await compareScenarios(result.tokenCompartido, email);
+			setCompareResult(compareData);
+
+			onClose?.();
+			router.push('/depthAnalysis');
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'No se pudo enviar');
 		} finally {
 			setIsLoading(false);
 		}
 	};
-
-	if (success) {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.title}>¡Listo!</Text>
-				<Text style={styles.subtitle}>
-					Te enviamos el reporte completo a {email}.
-				</Text>
-				{onClose && (
-					<Pressable style={styles.button} onPress={onClose}>
-						<Text style={styles.buttonText}>CERRAR</Text>
-					</Pressable>
-				)}
-			</View>
-		);
-	}
 
 	return (
 		<View style={styles.container}>

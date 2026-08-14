@@ -1,5 +1,9 @@
 // services/calculator-api.ts
-import { CalculatorRequest, CalculatorResponse } from '@/types/calculator';
+import {
+	CalculatorRequest,
+	CalculatorResponse,
+	CompareResponse,
+} from '@/types/calculator';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -22,24 +26,22 @@ export async function calculateCapacity(
 	return response.json();
 }
 
-export async function updateCalculationEmail(
-	tokenCompartido: string,
+export async function compareScenarios(
+	token: string,
 	email: string,
-): Promise<CalculatorResponse> {
+): Promise<CompareResponse> {
 	const response = await fetch(
-		`${API_BASE_URL}/api/calculations/${tokenCompartido}/email`,
+		`${API_BASE_URL}/api/calculations/${token}/compare`,
 		{
-			method: 'PATCH',
+			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ email: email }),
+			body: JSON.stringify({ email }),
 		},
 	);
 
 	if (!response.ok) {
 		const errorBody = await response.json().catch(() => null);
-		throw new Error(
-			errorBody?.message ?? `Error al enviar el email: ${response.status}`,
-		);
+		throw new Error(errorBody?.message ?? `Error: ${response.status}`);
 	}
 
 	return response.json();
