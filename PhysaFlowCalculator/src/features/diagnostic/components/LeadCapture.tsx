@@ -32,7 +32,7 @@ const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 			return;
 		}
 
-		if (!result?.id) {
+		if (!result?.tokenCompartido) {
 			setError('No hay un cálculo activo');
 			return;
 		}
@@ -41,7 +41,10 @@ const LeadCapture = ({ onClose }: LeadCaptureProps) => {
 		setError(null);
 
 		try {
-			const updated = await updateCalculationEmail(result.id, email);
+			const updated = await updateCalculationEmail(
+				result.tokenCompartido,
+				email,
+			);
 			setResult(updated);
 
 			onClose?.(); // cierra el modal

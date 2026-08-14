@@ -23,14 +23,17 @@ export async function calculateCapacity(
 }
 
 export async function updateCalculationEmail(
-	id: string,
+	tokenCompartido: string,
 	email: string,
 ): Promise<CalculatorResponse> {
-	const response = await fetch(`${API_BASE_URL}/api/calculations/${id}/email`, {
-		method: 'PATCH',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ email: email }),
-	});
+	const response = await fetch(
+		`${API_BASE_URL}/api/calculations/${tokenCompartido}/email`,
+		{
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email: email }),
+		},
+	);
 
 	if (!response.ok) {
 		const errorBody = await response.json().catch(() => null);
