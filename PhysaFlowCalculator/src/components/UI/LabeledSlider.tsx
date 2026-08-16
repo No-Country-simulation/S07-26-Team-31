@@ -1,6 +1,6 @@
 // components/UI/LabeledSlider.tsx
-import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Colors } from '@/constants/Colors';
 import { Fonts } from '@/constants/Fonts';
@@ -26,16 +26,60 @@ const LabeledSlider = ({
 	showValue = true,
 	suffix = '%',
 }: LabeledSliderProps) => {
+	const [isEditing, setIsEditing] = useState(false);
+	const [textValue, setTextValue] = useState(String(value));
+
+	// Mantiene sincronizado el texto cuando el valor cambia desde el slider
+	useEffect(() => {
+		if (!isEditing) {
+			setTextValue(String(value));
+		}
+	}, [value, isEditing]);
+
+	const handleTextChange = (text: string) => {
+		// Permite solo números y un punto decimal mientras se escribe
+		const cleaned = text.replace(/[^0-9.]/g, '');
+		setTextValue(cleaned);
+	};
+
+	const commitTextValue = () => {
+		setIsEditing(false);
+
+		const num = parseFloat(textValue);
+		if (!isNaN(num)) {
+			const clamped = Math.min(Math.max(num, min), max);
+			onChange(clamped);
+			setTextValue(String(clamped));
+		} else {
+			setTextValue(String(value));
+		}
+	};
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<Text style={styles.label}>{label}</Text>
-				{showValue && (
-					<Text style={styles.value}>
-						{value}
-						{suffix}
-					</Text>
-				)}
+
+				{showValue &&
+					(isEditing ? (
+						<TextInput
+							style={styles.valueInput}
+							value={textValue}
+							onChangeText={handleTextChange}
+							onBlur={commitTextValue}
+							onSubmitEditing={commitTextValue}
+							keyboardType="numeric"
+							autoFocus
+							selectTextOnFocus
+						/>
+					) : (
+						<Pressable onPress={() => setIsEditing(true)}>
+							<Text style={styles.value}>
+								{value}
+								{suffix}
+							</Text>
+						</Pressable>
+					))}
 			</View>
 
 			<Slider
@@ -73,6 +117,17 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		fontWeight: '700',
 		color: Colors.dark.primary,
+	},
+	valueInput: {
+		fontFamily: Fonts.headline,
+		fontSize: 24,
+		fontWeight: '700',
+		color: Colors.dark.primary,
+		minWidth: 60,
+		textAlign: 'right',
+		borderBottomWidth: 1,
+		borderBottomColor: Colors.dark.primary,
+		padding: 0,
 	},
 	slider: {
 		width: '100%',
