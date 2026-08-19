@@ -18,10 +18,10 @@ public class EmailService {
     @Value("${mail.from}")
     private String from;
 
-    @Value("${frontend.baseUrl}")
-    private String frontendBaseUrl;
+    @Value("${backend.baseUrl}")
+    private String backendBaseUrl;
 
-    public void sendCalculationEmail(String to, String token) {
+    public void sendCalculationEmail(String to, String token, String pdfFilename) {
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("SendGrid API key no configurada. Email no enviado a: {}", to);
             return;
@@ -31,18 +31,91 @@ public class EmailService {
         Email toEmail = new Email(to);
         String subject = "Tu diagnóstico de PhysaFlow está listo";
         String body = """
-                Hola,
+        <html>
+        <body style="
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333333;
+        ">
 
-                Tu diagnóstico técnico en PhysaFlow ya se encuentra procesado y disponible.
+            <!-- LOGO -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img
+                    src="%s"
+                    alt="PhysaFlow"
+                    width="180"
+                    style="display: inline-block; border: 0;"
+                >
+            </div>
 
-                Podés acceder a los resultados ingresando al siguiente enlace:
-                %s/result?token=%s
+            <p>Hola,</p>
 
-                ¡Saludos!
-                El equipo de PhysaFlow
-                """.formatted(frontendBaseUrl, token);
+            <p>
+                Tu diagnóstico técnico en <strong>PhysaFlow</strong>
+                ya se encuentra procesado y disponible.
+            </p>
 
-        Mail mail = new Mail(fromEmail, subject, toEmail, new Content("text/plain", body));
+            <p>
+                Podés acceder al cálculo obtenido ingresando al siguiente enlace:
+            </p>
+
+            <!-- BOTÓN DIAGNÓSTICO -->
+            <div style="text-align: center; margin: 25px 0;">
+                <a
+                    href="%s"
+                    style="
+                        display: inline-block;
+                        background-color: #2563eb;
+                        color: #ffffff;
+                        text-decoration: none;
+                        padding: 12px 24px;
+                        border-radius: 6px;
+                        font-size: 15px;
+                        font-weight: bold;
+                    "
+                >
+                    Ver diagnóstico
+                </a>
+            </div>
+
+            <p>
+                También podés descargar el análisis completo en formato PDF:
+            </p>
+
+            <!-- BOTÓN PDF -->
+            <div style="text-align: center; margin: 25px 0;">
+                <a
+                    href="%s"
+                    style="
+                        display: inline-block;
+                        background-color: #10b981;
+                        color: #ffffff;
+                        text-decoration: none;
+                        padding: 12px 24px;
+                        border-radius: 6px;
+                        font-size: 15px;
+                        font-weight: bold;
+                    "
+                >
+                    Descargar PDF
+                </a>
+            </div>
+
+            <p>
+                ¡Saludos!<br>
+                El equipo de <strong>PhysaFlow</strong>
+            </p>
+
+        </body>
+        </html>
+        """.formatted(
+                "https://raw.githubusercontent.com/No-Country-simulation/S07-26-Team-31/refs/heads/main/PhysaFlowCalculator/assets/images/logo.png",
+                    backendBaseUrl + "/api/calculations/" + token,
+                        backendBaseUrl + "/api/pdf/descargar/" + pdfFilename
+                );
+
+        Mail mail = new Mail(fromEmail, subject, toEmail, new Content("text/html", body));
         mail.setFrom(fromEmail);
 
         SendGrid sg = new SendGrid(apiKey);

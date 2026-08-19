@@ -141,7 +141,6 @@ public class CalculationService {
 
         calculo.setCorreo(correo);
         calculoRepository.save(calculo);
-        emailService.sendCalculationEmail(correo, calculo.getTokenCompartido());
 
         return calculationMapper.toResponse(calculo);
     }
@@ -165,7 +164,7 @@ public class CalculationService {
         // Descarga PDF
         String nombrePdf = pdfService.generarPdf(calculo, calculoOptimizado, comparacion);
         // Enviar mail
-        emailService.sendCalculationEmail(correo, calculo.getTokenCompartido());
+        emailService.sendCalculationEmail(correo, calculo.getTokenCompartido(), nombrePdf);
 
         // Devolver Reporte
         return ReportResponse.builder()
